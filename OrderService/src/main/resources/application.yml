@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: order-service
+  cloud:
+    config:
+      enabled: true
+  config:
+    import: optional:configserver:http://localhost:9999
+    #import: optional:configserver:http://config-service:9999
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:7080/realms/Ecommerce-realm
+          jwk-set-uri: http://localhost:7080/realms/Ecommerce-realm/protocol/openid-connect/certs
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:order-db
+    username: order-service
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+      #defaultZone: http://discovery-service:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+#  endpoint:
+#    refresh:
+#      enabled: true
+server:
+  port: 8083
