@@ -11,7 +11,7 @@ import org.springframework.security.web.server.context.NoOpServerSecurityContext
 
 @Configuration
 @EnableWebFluxSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
