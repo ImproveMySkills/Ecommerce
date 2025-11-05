@@ -13,8 +13,8 @@ spring:
         jwt:
           #issuer-uri: http://localhost:7080/realms/Ecommerce-realm
           #jwk-set-uri: http://localhost:7080/realms/Ecommerce-realm/protocol/openid-connect/certs
-          issuer-uri: https://keycloak:8443/realms/Ecommerce-realm
-          jwk-set-uri: https://keycloak:8443/realms/Ecommerce-realm/protocol/openid-connect/certs
+          issuer-uri: https://keycloak:8443/realms/ecommerce-realm
+          jwk-set-uri: https://keycloak:8443/realms/ecommerce-realm/protocol/openid-connect/certs
   h2:
     console:
       enabled: true
@@ -40,6 +40,9 @@ management:
 #      enabled: true
 server:
   port: 8082
+  ssl:
+    trust-store: /app/truststore.jks
+    trust-store-password: changeit
 
 global:
   parms:

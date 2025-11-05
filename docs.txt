@@ -1,0 +1,98 @@
+Configuration HTTPS Keycloak pour les microservices
+
+Cette documentation explique comment générer un certificat auto-signé pour Keycloak et configurer les microservices pour qu’ils fassent confiance à ce certificat.
+
+1️⃣ Créer un dossier pour les certificats
+mkdir keyssh
+cd keyssh
+
+2️⃣ Générer la clé privée et le certificat pour Keycloak
+
+On utilise keytool pour créer une paire de clés auto-signée.
+
+keytool -genkeypair \
+  -alias keycloak \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 3650 \
+  -keystore keycloak.jks \
+  -dname "CN=localhost, OU=Dev, O=Ecommerce, L=City, S=State, C=FR" \
+  -storepass changeit \
+  -keypass changeit
+
+
+keycloak.jks : fichier Java Keystore qui contient la clé et le certificat.
+
+CN=localhost : Common Name (nom du serveur). Si Keycloak est accessible via un autre hostname ou IP, mettre ce nom.
+
+storepass et keypass : mots de passe du keystore et de la clé.
+
+3️⃣ Exporter le certificat public
+
+Pour que les microservices fassent confiance au certificat, il faut exporter le certificat public :
+
+keytool -exportcert \
+  -alias keycloak \
+  -keystore keycloak.jks \
+  -file keycloak.crt \
+  -storepass changeit
+
+
+Résultat : keycloak.crt → certificat public que Java peut importer.
+
+4️⃣ Importer le certificat dans le truststore Java
+
+Pour que les microservices Java acceptent le HTTPS auto-signé :
+
+keytool -importcert \
+  -trustcacerts \
+  -file keyssh/keycloak.crt \
+  -alias keycloak \
+  -keystore $JAVA_HOME/lib/security/cacerts \
+  -storepass changeit
+
+
+$JAVA_HOME : chemin vers ton JDK.
+
+Cette commande ajoute le certificat de Keycloak dans le truststore Java, pour que toutes les connexions HTTPS le reconnaissent comme fiable.
+
+Remarque : cette étape nécessite souvent les droits administrateur.
+
+⚠️ Si tu ne veux pas toucher au cacerts global, tu peux créer un truststore personnalisé et le passer aux microservices avec -Djavax.net.ssl.trustStore=/path/to/truststore.jks.
+
+5️⃣ Configurer Keycloak pour utiliser le keystore
+
+Dans standalone.xml ou via la configuration Docker de Keycloak :
+
+Spécifie le keystore keycloak.jks.
+
+Configure le port HTTPS (8443 par exemple).
+
+Exemple Docker Compose (Keycloak) :
+
+keycloak:
+  image: quay.io/keycloak/keycloak:21.1
+  environment:
+    KEYCLOAK_ADMIN: admin
+    KEYCLOAK_ADMIN_PASSWORD: admin
+  command: start-dev --https-key-store-file=/opt/keyssh/keycloak.jks --https-key-store-password=changeit
+  ports:
+    - "8443:8443"
+  volumes:
+    - ./keyssh:/opt/keyssh
+
+6️⃣ Vérification
+
+Depuis l’hôte, vérifier HTTPS :
+
+curl -vk https://localhost:8443
+
+
+Depuis un microservice Java, faire une requête à Keycloak :
+Si le certificat est bien importé, la connexion HTTPS doit réussir sans erreur SSLHandshakeException.
+
+7️⃣ Notes pratiques
+
+Tokens Keycloak : Les microservices doivent utiliser l’URL https://keycloak:8443/realms/... pour récupérer les certificats JWKS.
+
+Postman : Pour tester les API avec le token, il faudra utiliser l’URL publique (localhost ou le hostname correct) ou ignorer la vérification SSL dans Postman.

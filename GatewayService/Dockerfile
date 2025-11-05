@@ -31,4 +31,4 @@ COPY --from=build /build/target/*.jar app.jar
 EXPOSE 8080
 
 # Lancement de l'application avec le profil docker
-ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-Djavax.net.ssl.trustStore=/app/truststore.jks", "-Djavax.net.ssl.trustStorePassword=changeit", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Djavax.net.ssl.trustStore=/app/truststore.jks", "-Djavax.net.ssl.trustStorePassword=changeit", "-Dspring.profiles.active=native", "-jar", "app.jar"]

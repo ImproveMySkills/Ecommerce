@@ -13,8 +13,8 @@ spring:
         jwt:
           #issuer-uri: http://localhost:7080/realms/Ecommerce-realm
           #jwk-set-uri: http://localhost:7080/realms/Ecommerce-realm/protocol/openid-connect/certs
-          issuer-uri: https://keycloak:8443/realms/Ecommerce-realm
-          jwk-set-uri: https://keycloak:8443/realms/Ecommerce-realm/protocol/openid-connect/certs
+          issuer-uri: https://keycloak:8443/realms/ecommerce-realm
+          jwk-set-uri: https://keycloak:8443/realms/ecommerce-realm/protocol/openid-connect/certs
 
 #    gateway:
 #      server:
@@ -38,4 +38,4 @@ eureka:
       defaultZone: http://discovery-service:8761/eureka
 
 server:
-  port: 8888
+  port: 8080
