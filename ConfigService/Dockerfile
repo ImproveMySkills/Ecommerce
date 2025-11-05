@@ -5,8 +5,8 @@ FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /build
 
 # Copie uniquement le module courant (ex: discovery-service) + pom parent
-COPY config-service/pom.xml pom.xml
-COPY config-service/src src
+COPY ConfigService/pom.xml pom.xml
+COPY ConfigService/src src
 
 # Build du microservice uniquement
 RUN mvn clean package -DskipTests
@@ -21,9 +21,12 @@ USER spring:spring
 # Répertoire de travail dans le conteneur
 WORKDIR /app
 
+COPY keyssh/server.crt server.crt
+RUN keytool -import -trustcacerts -alias keycloak-cert -file server.crt -keystore /app/truststore.jks -storepass changeit -noprompt
+
 # Copie du JAR compilé depuis l'étape de build
 COPY --from=build /build/target/*.jar app.jar
-COPY config-repo-main config/
+#COPY ecom-repo config/
 
 # Exposition du port (à adapter selon le microservice)
 EXPOSE 9999

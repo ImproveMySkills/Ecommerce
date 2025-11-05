@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   discovery-service:
-    build: ./discovery-service
+    build: ./DiscoveryService
     ports:
       - "8761:8761"
     networks:
@@ -16,7 +16,7 @@ services:
   config-service:
     build:
       context: .
-      dockerfile: config-service/Dockerfile
+      dockerfile: ConfigService/Dockerfile
     ports:
       - "9999:9999"
     #    depends_on:
@@ -33,7 +33,7 @@ services:
   gateway-service:
     build:
       context: .
-      dockerfile: gateway-service/Dockerfile
+      dockerfile: GatewayService/Dockerfile
     ports:
       - "8888:8888"
     #    depends_on:
@@ -50,25 +50,8 @@ services:
   #      timeout: 10s
   #      retries: 5
 
-  authorization-service:
-    build: ./authorization-service
-    ports:
-      - "8084:8084"
-    #    depends_on:
-    #      discovery-service:
-    #        condition: service_healthy
-    #      config-service:
-    #        condition: service_healthy
-    networks:
-      - spring-net
-  #    healthcheck:
-  #      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
-  #      interval: 30s
-  #      timeout: 10s
-  #      retries: 5
-
   order-service:
-    build: ./order-service
+    build: ./OrderService
     ports:
       - "8083:8083"
     #      discovery-service:
@@ -86,7 +69,7 @@ services:
   #      retries: 5
 
   customer-service:
-    build: ./customer-service
+    build: ./CustomerService
     ports:
       - "8082:8082"
     #      discovery-service:
@@ -106,7 +89,7 @@ services:
   product-service:
     build:
       context: .
-      dockerfile: product-service/Dockerfile
+      dockerfile: ProductService/Dockerfile
     ports:
       - "8081:8081"
     #      discovery-service:

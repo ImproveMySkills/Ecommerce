@@ -1,7 +1,9 @@
 package org.example.clients;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.example.dto.Customer;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +16,8 @@ import java.util.List;
 public interface CustomerRestClient {
 
     @GetMapping("/api/customers/{id}")
-        //@CircuitBreaker(name = "customerservice", fallbackMethod = "getDefaultCustomer")
+        @CircuitBreaker(name = "customerservice", fallbackMethod = "getDefaultCustomer")
+
     ResponseEntity<Customer> getCustomerById(@PathVariable Long id);
     @GetMapping(path = "/api/customers")
     ResponseEntity<List<Customer>> getAllCustomers();
@@ -22,11 +25,7 @@ public interface CustomerRestClient {
     @PostMapping("/api/customers")
     ResponseEntity<Customer> postCustomer(@RequestBody Customer customer);
 
-/*    default Customer getDefaultCustomer(Long id, Exception exception){
-        return Customer.builder()
-                .firstName("UNKNOWN")
-                .lastName("UNKNOWN")
-                .email("UNKNOWN@improvemyskills.com")
-                .build();
-    }*/
+    default ResponseEntity<Customer> getDefaultCustomer(Long id, Exception exception){
+        return new ResponseEntity<>(new Customer(1L, "UNKNOWN", "UNKNOWN", "UNKNOWN@improvemyskills.com"), HttpStatus.ACCEPTED);
+    }
 }

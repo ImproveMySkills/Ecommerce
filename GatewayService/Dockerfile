@@ -5,8 +5,8 @@ FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /build
 
 # Copie uniquement le module courant (ex: discovery-service) + pom parent
-COPY gateway-service/pom.xml pom.xml
-COPY gateway-service/src src
+COPY GatewayService/pom.xml pom.xml
+COPY GatewayService/src src
 
 # Build du microservice uniquement
 RUN mvn clean package -DskipTests

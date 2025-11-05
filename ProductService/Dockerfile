@@ -21,8 +21,8 @@ USER spring:spring
 # Répertoire de travail dans le conteneur
 WORKDIR /app
 
-COPY keyssh/server.crt server.crt
-RUN keytool -import -trustcacerts -alias keycloak-cert -file server.crt -keystore /app/truststore.jks -storepass changeit -noprompt
+#COPY keyssh/server.crt server.crt
+#RUN keytool -import -trustcacerts -alias keycloak-cert -file server.crt -keystore /app/truststore.jks -storepass changeit -noprompt
 
 # Copie du JAR compilé depuis l'étape de build
 COPY --from=build /build/target/*.jar app.jar

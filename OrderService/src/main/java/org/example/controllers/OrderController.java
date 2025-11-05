@@ -1,5 +1,7 @@
 package org.example.controllers;
 
+import org.example.clients.CustomerRestClient;
+import org.example.dto.Customer;
 import org.example.models.Order;
 import org.example.services.OrderService;
 import org.slf4j.Logger;
@@ -15,9 +17,11 @@ import java.util.List;
 public class OrderController {
     Logger logger = LoggerFactory.getLogger(OrderController.class);
     OrderService orderService;
+    CustomerRestClient  customerRestClient;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService,  CustomerRestClient customerRestClient) {
         this.orderService = orderService;
+        this.customerRestClient = customerRestClient;
     }
 
     @GetMapping("/orders/{id}")
@@ -47,5 +51,10 @@ public class OrderController {
         return ResponseEntity.ok(
                 orderService.getOrderByCustomer(customerId)
         );
+    }
+
+    @GetMapping("/circuitbreaker/{id}")
+    ResponseEntity<Customer> getOrderByCustomerId(@PathVariable Long id){
+        return  customerRestClient.getCustomerById(id);
     }
 }
